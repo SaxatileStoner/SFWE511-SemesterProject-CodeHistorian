@@ -1,7 +1,10 @@
+"""
+Enumeration Data used by main.py to categorize location type and location value of PLC data.
+"""
 from enum import Enum
 
 # Enumeration for all Input Register types, i.e. %IW0
-class InputRegisters(Enum):
+class InputRegister(Enum):
     FlowRateSensor0 = 0
     FlowRateSensor1 = 1
     FlowRateSensor2 = 2
@@ -29,7 +32,7 @@ class InputStatus(Enum):
     HighPressureSwitch2 = 7
 
 # Enumeration for all Holder Register types, i.e. %QW0
-class HoldingRegisters(Enum):
+class HoldingRegister(Enum):
     IsolationValveCommand0 = 0
     IsolationValveCommand1 = 1
     IsolationValveCommand2 = 2
