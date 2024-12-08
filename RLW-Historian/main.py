@@ -27,7 +27,8 @@ def compile_data_to_list(enum_data: [InputRegisters, InputStatus, HoldingRegiste
     :return append_list: Returns a list of appended values from the data entry created for each register/coil
     """
     append_list = []
-    if type(register_data) == pymodbus.pdu.register_read_message.ReadInputRegistersResponse:
+    if type(register_data) == pymodbus.pdu.register_read_message.ReadInputRegistersResponse or \
+        type(register_data) == pymodbus.pdu.register_read_message.ReadHoldingRegistersResponse:
         for i in range(enum_data.__len__()):
             append_list.append(
                 [
@@ -38,7 +39,8 @@ def compile_data_to_list(enum_data: [InputRegisters, InputStatus, HoldingRegiste
                      "int",
                      register_data.registers[i]
                 ])
-    elif type(register_data) == pymodbus.pdu.bit_read_message.ReadDiscreteInputsResponse:
+    elif type(register_data) == pymodbus.pdu.bit_read_message.ReadDiscreteInputsResponse or \
+            type(register_data) == pymodbus.pdu.bit_read_message.ReadCoilsResponse:
         for i in range(enum_data.__len__()):
             append_list.append([
                      time_stamp.__str__(),
