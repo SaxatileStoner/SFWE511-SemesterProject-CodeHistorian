@@ -7,6 +7,6 @@ a database for future analysis.
 
 ## Example Database Structure
 
-| Time                       | Name            | Location Type  | Location | Type | Value |
-|----------------------------|-----------------|----------------|----------|------|-------|
-| 2024-12-08 00:23:34.949717 | FlowRateSensor0 | InputRegisters | 0        | int  | 4     |
+| ID | Time                       | Name            | Location Type  | Location | Type | Value |
+|----|----------------------------|-----------------|----------------|----------|------|-------|
+| 0  | 2024-12-08 00:23:34.949717 | FlowRateSensor0 | InputRegisters | 0        | int  | 4     |

@@ -8,10 +8,13 @@ from data_enum import InputRegisters as InputRegisters
 from data_enum import InputStatus as InputStatus
 from data_enum import HoldingRegisters as HoldingRegisters
 from data_enum import CoilStatus as CoilStatus
+import database
 
 # Config
 plc_runtime_address = "127.0.0.1"
 client = ModbusTcpClient(plc_runtime_address)
+path_to_db = "../db/database.sqlite"
+
 
 
 def compile_data_to_list(enum_data: [InputRegisters, InputStatus, HoldingRegisters, CoilStatus],
@@ -53,6 +56,10 @@ def compile_data_to_list(enum_data: [InputRegisters, InputStatus, HoldingRegiste
 
     return append_list
 
+# Database Initialization
+db_connection = database.create_sql_connection(path_to_db)
+database.initialize_table(db_connection)
+
 # Client Connect to OpenPLC Runtime Server
 if client.connect():
     # Read Registers and Coils, Get Time After Read
@@ -69,16 +76,29 @@ if client.connect():
     coil_status_time = datetime.now()
 
     # Compile data to be stored as [TIME, NAME, LOCATION_TYPE, LOCATION, TYPE, VALUE]
-    new_database_entry = [compile_data_to_list(InputRegisters, input_register_time, input_registers),
+    database_entries_as_lists = [compile_data_to_list(InputRegisters, input_register_time, input_registers),
                           compile_data_to_list(InputStatus, input_status_time, input_statuses),
                           compile_data_to_list(HoldingRegisters, holding_register_time, holding_registers),
                           compile_data_to_list(CoilStatus, coil_status_time, coil_statuses)]
-    new_database_entry = list(itertools.chain(*new_database_entry)) # Flatten into one list of lists
-    print(new_database_entry)
 
-    # TODO: Add ability to append the new entry list into a database
+    # Insert data into database
+    for locational_type in database_entries_as_lists:
+        for entry in locational_type:
+            match entry[2]:
+                case "InputRegisters":
+                    database.insert_table_input_registers(db_connection, entry)
+                    pass
+                case "InputStatus":
+                    database.insert_table_input_statuses(db_connection, entry)
+                    pass
+                case "HoldingRegisters":
+                    database.insert_table_holding_registers(db_connection, entry)
+                    pass
+                case "CoilStatus":
+                    database.insert_table_coil_statues(db_connection, entry)
+                    pass
+    print("Added Entries to Database...")
+
     # TODO: Loop the program every 30 seconds to keep updating the database as long as the program is running
-
-
 else:
     print("Connection Failed! Check given IP address or make sure OpenPLC Runtime and ScadaBR is running!")
